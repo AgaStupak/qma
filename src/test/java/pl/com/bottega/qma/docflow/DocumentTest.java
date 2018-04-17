@@ -87,7 +87,7 @@ public class DocumentTest {
     editDocument(document, Optional.of(newTitle), Optional.of(newContent));
 
     assertThatThrownBy(() -> verifyDocument(document, employeeId)).
-        isInstanceOf(IllegalArgumentException.class).
+        isInstanceOf(IllegalDocumentOperation.class).
         hasMessage("document creator can't verify it");
   }
 
@@ -97,7 +97,7 @@ public class DocumentTest {
     editDocument(document, Optional.of(newTitle), Optional.of(newContent), managerId);
 
     assertThatThrownBy(() -> verifyDocument(document)).
-        isInstanceOf(IllegalArgumentException.class).
+        isInstanceOf(IllegalDocumentOperation.class).
         hasMessage("document editor can't verify it");
   }
 
@@ -115,7 +115,7 @@ public class DocumentTest {
     var document = draftDocument();
 
     assertThatThrownBy(() -> publishDocument(document)).
-        isInstanceOf(IllegalStateException.class).
+        isInstanceOf(IllegalDocumentOperation.class).
         hasMessage("only verified and published documents can be published");
   }
 
@@ -124,7 +124,7 @@ public class DocumentTest {
     Document document = publishedDocument();
 
     assertThatThrownBy(() -> editDocument(document, Optional.of("other"), Optional.empty())).
-        isInstanceOf(IllegalStateException.class).
+        isInstanceOf(IllegalDocumentOperation.class).
         hasMessage("only draft and verified documents can be edited");
   }
 
@@ -133,7 +133,7 @@ public class DocumentTest {
     Document document = publishedDocument();
 
     assertThatThrownBy(() -> verifyDocument(document)).
-        isInstanceOf(IllegalStateException.class).
+        isInstanceOf(IllegalDocumentOperation.class).
         hasMessage("only draft documents can be verified");
   }
 
