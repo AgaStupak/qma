@@ -7,6 +7,7 @@ import pl.com.bottega.qma.core.CommandGateway;
 import pl.com.bottega.qma.core.CommandLogger;
 import pl.com.bottega.qma.core.SecurityManager;
 import pl.com.bottega.qma.core.TxManager;
+import pl.com.bottega.qma.core.validation.ValidationEngine;
 import pl.com.bottega.qma.docflow.DocumentFactory;
 import pl.com.bottega.qma.docflow.InMemoryDocumentRepository;
 import pl.com.bottega.qma.docflow.commands.CreateDocumentCommand;
@@ -16,7 +17,7 @@ import pl.com.bottega.qma.docflow.numbergenerators.ISONumberGenerator;
 public class Qma {
 
   public static void main(String[] args) {
-    CommandGateway commandGateway = new CommandGateway(new CommandLogger(), new SecurityManager(), new TxManager());
+    CommandGateway commandGateway = new CommandGateway(new CommandLogger(), new SecurityManager(), new TxManager(), new ValidationEngine());
     commandGateway.registerHandler(CreateDocumentCommand.class, new CreateDocumentHandler(new InMemoryDocumentRepository(), new DocumentFactory(new ISONumberGenerator())));
     ConfirmDocumentHandler confirmDocumentHandler = new ConfirmDocumentHandler();
     commandGateway.registerHandler(ConfirmDocumentCommand.class, confirmDocumentHandler::confirm);
