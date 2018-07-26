@@ -1,38 +1,46 @@
 package pl.com.bottega.qma.docflow;
 
+import com.google.common.base.Predicate;
 import pl.com.bottega.qma.docflow.commands.*;
+import pl.com.bottega.qma.docflow.events.*;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
 public class Document {
 
-  private final String number;
-  private String title;
-  private String content;
   private DocumentStatus status;
   private final Long creatorId;
-  private Long editorId, verifierId, publisherId, archiverId;
-  private Set<String> publishedForDepartments = new HashSet<>();
+  private Long editorId, archiverId;
+
+  private List<DocumentEvent> events = new LinkedList<>();
 
   public Document(String number, CreateDocumentCommand createDocumentCommand) {
-    this.number = number;
     status = DocumentStatus.DRAFT;
-    title = "";
-    content = "";
     creatorId = createDocumentCommand.creatorId;
+    events.add(new DocumentCreated(number, createDocumentCommand.creatorId, LocalDateTime.now()));
   }
 
   public void edit(EditDocumentCommand editDocumentCommand) {
     checkState(status == DocumentStatus.DRAFT || status == DocumentStatus.VERIFIED,
         "only draft and verified documents can be edited");
     status = DocumentStatus.DRAFT;
-    editDocumentCommand.title.ifPresent(title -> this.title = title);
-    editDocumentCommand.content.ifPresent(content -> this.content = content);
     editorId = editDocumentCommand.editorId;
+    events.add(new DocumentEdited(
+        editDocumentCommand.documentNumber,
+        editDocumentCommand.editorId,
+        LocalDateTime.now(),
+        editDocumentCommand.title,
+        editDocumentCommand.content
+    ));
   }
 
   public void verify(VerifyDocumentCommand verifyDocumentCommand) {
@@ -41,15 +49,23 @@ public class Document {
     checkArgument(!creatorId.equals(verifyDocumentCommand.verifierId), "document creator can't verify it");
     checkArgument(!editorId.equals(verifyDocumentCommand.verifierId), "document editor can't verify it");
     status = DocumentStatus.VERIFIED;
-    verifierId = verifyDocumentCommand.verifierId;
+    events.add(new DocumentVerified(
+        verifyDocumentCommand.documentNumber,
+        verifyDocumentCommand.verifierId,
+        LocalDateTime.now()
+    ));
   }
 
   public void publish(PublishDocumentCommand publishDocumentCommand) {
     checkState(status == DocumentStatus.VERIFIED || status == DocumentStatus.PUBLISHED,
         "only verified and published documents can be published");
     status = DocumentStatus.PUBLISHED;
-    publisherId = publishDocumentCommand.publisherId;
-    publishedForDepartments.addAll(publishDocumentCommand.departmentCodes);
+    events.add(new DocumentPublished(
+        publishDocumentCommand.documentNumber,
+        publishDocumentCommand.publisherId,
+        LocalDateTime.now(),
+        publishDocumentCommand.departmentCodes
+    ));
   }
 
   public void archive(ArchiveDocumentCommand archiveDocumentCommand) {
@@ -58,7 +74,7 @@ public class Document {
   }
 
   public String number() {
-    return number;
+    return events.get(0).number;
   }
 
   public Long creatorId() {
@@ -66,11 +82,25 @@ public class Document {
   }
 
   public String title() {
-    return title;
+    return eventsOfType(DocumentEdited.class).
+        filter((event) -> event.title.isPresent()).
+        reduce((first, second) -> second).
+        map((event) -> event.title.get()).
+        orElse("");
+  }
+
+  private <T extends DocumentEvent> Stream<T> eventsOfType(Class<T> klass) {
+    return events.stream().
+        filter((event) -> event.getClass().equals(klass)).
+        map((event) -> (T) event);
   }
 
   public String content() {
-    return content;
+    return eventsOfType(DocumentEdited.class).
+        filter((event) -> event.content.isPresent()).
+        map((event) -> event.content.get()).
+        reduce((first, second) -> second).
+        orElse("");
   }
 
   public Long editorId() {
@@ -82,15 +112,22 @@ public class Document {
   }
 
   public Long verifierId() {
-    return verifierId;
+    return eventsOfType(DocumentVerified.class).
+        reduce((first, second) -> second).
+        map((event) -> event.employeeId).
+        orElse(null);
   }
 
   public Long publisherId() {
-    return publisherId;
+    return eventsOfType(DocumentPublished.class).
+        reduce((first, second) -> second).
+        map((event) -> event.employeeId).
+        orElse(null);
   }
 
   public Set<String> publishedFor() {
-    return publishedForDepartments;
+
+    return new HashSet<>();
   }
 
   public Long archiverId() {
