@@ -1,11 +1,9 @@
 package pl.com.bottega.qma.docflow;
 
-import com.google.common.base.Predicate;
 import pl.com.bottega.qma.docflow.commands.*;
 import pl.com.bottega.qma.docflow.events.*;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -126,8 +124,9 @@ public class Document {
   }
 
   public Set<String> publishedFor() {
-
-    return new HashSet<>();
+    return eventsOfType(DocumentPublished.class).
+        flatMap((events) -> events.departments.stream()).
+        collect(Collectors.toSet());
   }
 
   public Long archiverId() {
