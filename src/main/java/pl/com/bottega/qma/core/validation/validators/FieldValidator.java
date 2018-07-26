@@ -1,4 +1,6 @@
-package pl.com.bottega.qma.core.validation;
+package pl.com.bottega.qma.core.validation.validators;
+
+import pl.com.bottega.qma.core.validation.ValidationErrors;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
