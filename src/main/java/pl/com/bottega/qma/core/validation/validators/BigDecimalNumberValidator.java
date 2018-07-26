@@ -1,9 +1,12 @@
-package pl.com.bottega.qma.core.validation;
+package pl.com.bottega.qma.core.validation.validators;
+
+import pl.com.bottega.qma.core.validation.ValidateNumber;
+import pl.com.bottega.qma.core.validation.ValidationErrors;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 
-class BigDecimalNumberValidator extends FieldValidator<BigDecimal> {
+public class BigDecimalNumberValidator extends FieldValidator<BigDecimal> {
 
   private final ValidateNumber config;
 

@@ -1,8 +1,11 @@
-package pl.com.bottega.qma.core.validation;
+package pl.com.bottega.qma.core.validation.validators;
+
+import pl.com.bottega.qma.core.validation.ValidateNumber;
+import pl.com.bottega.qma.core.validation.ValidationErrors;
 
 import java.lang.reflect.Field;
 
-class LongNumberValidator extends FieldValidator<Long> {
+public class LongNumberValidator extends FieldValidator<Long> {
 
   private final ValidateNumber config;
 
