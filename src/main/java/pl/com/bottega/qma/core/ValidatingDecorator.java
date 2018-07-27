@@ -14,7 +14,7 @@ public class ValidatingDecorator<CommandT extends Command, ReturnT> extends Hand
   public ReturnT handle(CommandT command) {
     var errors = validationEngine.validate(command);
     if(errors.isInvalid()) {
-      throw new IllegalArgumentException();
+      throw new CommandInvalidException(errors);
     }
     return decoratedHandler.handle(command);
   }

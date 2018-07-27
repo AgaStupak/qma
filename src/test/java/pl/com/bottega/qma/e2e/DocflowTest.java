@@ -8,7 +8,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import pl.com.bottega.qma.core.CommandGateway;
 import pl.com.bottega.qma.docflow.Document;
 import pl.com.bottega.qma.docflow.DocumentRepository;
+import pl.com.bottega.qma.docflow.DocumentStatus;
 import pl.com.bottega.qma.docflow.commands.CreateDocumentCommand;
+import pl.com.bottega.qma.docflow.commands.EditDocumentCommand;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -32,6 +36,27 @@ public class DocflowTest {
     Document document = documentRepository.get(nr);
     assertThat(document).isNotNull();
     assertThat(document.number()).isEqualTo(nr);
+  }
+
+  @Test
+  public void editsDocument() {
+    // given
+    CreateDocumentCommand createDocumentCommand = new CreateDocumentCommand();
+    createDocumentCommand.creatorId = 1L;
+    String nr = commandGateway.execute(createDocumentCommand);
+
+    //when
+    EditDocumentCommand editDocumentCommand = new EditDocumentCommand();
+    editDocumentCommand.editorId = 2L;
+    editDocumentCommand.documentNumber = nr;
+    editDocumentCommand.title = Optional.of("test");
+    commandGateway.execute(editDocumentCommand);
+
+    // then
+    Document document = documentRepository.get(nr);
+    assertThat(document.status()).isEqualTo(DocumentStatus.DRAFT);
+    assertThat(document.title()).isEqualTo("test");
+    assertThat(document.editorId()).isEqualTo(2L);
   }
 
 }
