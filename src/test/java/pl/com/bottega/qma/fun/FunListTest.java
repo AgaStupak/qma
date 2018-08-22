@@ -57,4 +57,15 @@ public class FunListTest {
     assertThat(l.contains("2")).isFalse();
   }
 
+  @Test
+  public void iteratesOverList() {
+    StringBuilder sb = new StringBuilder();
+    FunList<String> l = FunList.empty(String.class).add("1").add("2").add("3");
+
+
+    l.forEach((s) -> sb.append(s));
+
+    assertThat(sb.toString()).isEqualTo("123");
+  }
+
 }
