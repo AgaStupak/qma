@@ -1,25 +1,39 @@
 package pl.com.bottega.qma.core.validation;
 
 import java.lang.reflect.Field;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 public class ValidationEngine {
+
+  private List<ValidatorFactory> factories = new LinkedList<>();
+
+  public ValidationEngine() {
+    factories.add(new ValidatePresenceFactory());
+
+  }
+
   public ValidationErrors validate(Object object) {
+    List<Validator> validators = validatorsFor(object);
     ValidationErrors errors = new ValidationErrors();
-    for(Field field : object.getClass().getDeclaredFields()) {
-      ValidatePresence validatePresence = field.getAnnotation(ValidatePresence.class);
-      if(validatePresence != null)
-        try {
-          handlePresenceValidation(object, field, errors, validatePresence);
-        } catch (IllegalAccessException e) {
-          throw new RuntimeException(e);
-        }
+    for(Validator validator : validators) {
+      validator.validate(object, errors);
     }
     return errors;
   }
 
-  private void handlePresenceValidation(Object object, Field field, ValidationErrors errors, ValidatePresence validatePresence) throws IllegalAccessException {
-    Object value = field.get(object);
-    if(value == null)
-      errors.addError(field.getName(), "can't be blank");
+  private List<Validator> validatorsFor(Object object) {
+    List<Validator> validators = new LinkedList<>();
+    for(Field field : object.getClass().getDeclaredFields()) {
+      for(ValidatorFactory factory : factories) {
+        Optional<Validator> optionalValidator = factory.createValidator(field);
+        if(optionalValidator.isPresent()) {
+          validators.add(optionalValidator.get());
+        }
+      }
+    }
+    return validators;
   }
+
 }
