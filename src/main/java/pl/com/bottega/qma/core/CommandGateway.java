@@ -25,7 +25,6 @@ public class CommandGateway {
   public <ReturnT> ReturnT execute(Command command) {
     Handler handler = handlerFor(command);
     handler = decorateHandler(handler);
-    securityManager.checkSecurity(command, handler);
     Profiler profiler = new Profiler(command, handler);
     commandLogger.executionStarted(command);
     ReturnT returnValue;
@@ -41,6 +40,7 @@ public class CommandGateway {
 
   private Handler decorateHandler(Handler handler) {
     Handler decorated = new ValidatingHandler(handler, validationEngine);
+    decorated = new SecuredHandler(decorated, securityManager, handler);
     return decorated;
   }
 
