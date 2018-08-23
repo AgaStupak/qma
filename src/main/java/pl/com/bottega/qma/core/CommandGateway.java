@@ -1,5 +1,7 @@
 package pl.com.bottega.qma.core;
 
+import pl.com.bottega.qma.core.validation.ValidationEngine;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,16 +12,19 @@ public class CommandGateway {
   private CommandLogger commandLogger;
   private SecurityManager securityManager;
   private TxManager txManager;
+  private ValidationEngine validationEngine;
 
   public CommandGateway(CommandLogger commandLogger, SecurityManager securityManager,
-                        TxManager txManager) {
+                        TxManager txManager, ValidationEngine validationEngine) {
     this.commandLogger = commandLogger;
     this.securityManager = securityManager;
     this.txManager = txManager;
+    this.validationEngine = validationEngine;
   }
 
   public <ReturnT> ReturnT execute(Command command) {
     Handler handler = handlerFor(command);
+    handler = decorateHandler(handler);
     securityManager.checkSecurity(command, handler);
     Profiler profiler = new Profiler(command, handler);
     commandLogger.executionStarted(command);
@@ -32,6 +37,11 @@ public class CommandGateway {
     commandLogger.executionFinished(command);
     profiler.finished();
     return returnValue;
+  }
+
+  private Handler decorateHandler(Handler handler) {
+    Handler decorated = new ValidatingHandler(handler, validationEngine);
+    return decorated;
   }
 
   private <ReturnT> ReturnT executeInTx(Command command, TxHandler handler) {
@@ -55,7 +65,7 @@ public class CommandGateway {
 
   private Handler handlerFor(Command command) {
     if (!handlersMap.containsKey(command.getClass())) {
-      throw new IllegalArgumentException(String.format("No handler found for %s", command.getClass()));
+      throw new IllegalArgumentException(String.format("No decorated found for %s", command.getClass()));
     }
     return handlersMap.get(command.getClass());
   }

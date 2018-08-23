@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import pl.com.bottega.qma.core.validation.ValidationEngine;
+import pl.com.bottega.qma.core.validation.ValidationErrors;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Java6Assertions.assertThat;
@@ -23,6 +25,9 @@ public class CommandGatewayTest {
   @Mock
   private CommandGateway gateway;
 
+  @Mock
+  private ValidationEngine validationEngine;
+
   private TestHandler handler = new TestHandler();
 
   private TestTxHandler txHandler = new TestTxHandler();
@@ -32,7 +37,8 @@ public class CommandGatewayTest {
   @BeforeEach
   public void setup() {
     MockitoAnnotations.initMocks(this);
-    gateway = new CommandGateway(commandLogger, securityManager, txManager);
+    when(validationEngine.validate(any())).thenReturn(new ValidationErrors());
+    gateway = new CommandGateway(commandLogger, securityManager, txManager, validationEngine);
   }
 
   @Test

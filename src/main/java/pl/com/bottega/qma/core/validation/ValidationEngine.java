@@ -8,10 +8,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ValidationEngine {
 
-  private final Map<Class, List<Validator>> validatorsCache = new HashMap<>();
+  private final Map<Class, List<Validator>> validatorsCache = new ConcurrentHashMap<>();
 
   private final List<ValidatorFactory> factories = new LinkedList<>();
 
