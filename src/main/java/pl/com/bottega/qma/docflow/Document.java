@@ -11,8 +11,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 public class Document {
 
   private final List<DocumentEvent> events = new ArrayList<>();
@@ -33,7 +31,9 @@ public class Document {
     status().checkOperationPermited(DocumentVerified.class);
     checkDocumentOperationt(!creatorId().equals(verifyDocumentCommand.verifierId), "document creator can't verify it");
     checkDocumentOperationt(!editorId().equals(verifyDocumentCommand.verifierId), "document editor can't verify it");
-    events.add(new DocumentVerified(number(), verifyDocumentCommand.verifierId, LocalDateTime.now()));
+    var event = new DocumentVerified(number(), verifyDocumentCommand.verifierId, LocalDateTime.now());
+    events.add(event);
+    eventPublisher.publish(event);
   }
 
   private void checkDocumentOperationt(boolean condition, String errorMsg) {
