@@ -1,8 +1,17 @@
 package pl.com.bottega.qma.docflow;
 
 import pl.com.bottega.qma.core.events.EventPublisher;
-import pl.com.bottega.qma.docflow.commands.*;
-import pl.com.bottega.qma.docflow.events.*;
+import pl.com.bottega.qma.docflow.commands.ArchiveDocumentCommand;
+import pl.com.bottega.qma.docflow.commands.CreateDocumentCommand;
+import pl.com.bottega.qma.docflow.commands.EditDocumentCommand;
+import pl.com.bottega.qma.docflow.commands.PublishDocumentCommand;
+import pl.com.bottega.qma.docflow.commands.VerifyDocumentCommand;
+import pl.com.bottega.qma.docflow.events.DocumentArchived;
+import pl.com.bottega.qma.docflow.events.DocumentCreated;
+import pl.com.bottega.qma.docflow.events.DocumentEdited;
+import pl.com.bottega.qma.docflow.events.DocumentEvent;
+import pl.com.bottega.qma.docflow.events.DocumentPublished;
+import pl.com.bottega.qma.docflow.events.DocumentVerified;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,8 +19,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static com.google.common.base.Preconditions.checkArgument;
 
 public class Document {
 
