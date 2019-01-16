@@ -13,6 +13,13 @@ import pl.com.bottega.qma.docflow.events.DocumentEvent;
 import pl.com.bottega.qma.docflow.events.DocumentPublished;
 import pl.com.bottega.qma.docflow.events.DocumentVerified;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,13 +27,24 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Entity
 public class Document {
 
-  private final List<DocumentEvent> events = new ArrayList<>();
-  private final EventPublisher eventPublisher;
+  @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+  @JoinColumn(name = "number")
+  private List<DocumentEvent> events = new ArrayList<>();
+
+  @Transient
+  private EventPublisher eventPublisher;
+
+  Document() {}
+
+  @Id
+  private String number;
 
   public Document(String number, CreateDocumentCommand createDocumentCommand, EventPublisher eventPublisher) {
     this.eventPublisher = eventPublisher;
+    this.number = number;
     events.add(new DocumentCreated(number, createDocumentCommand.creatorId, LocalDateTime.now()));
   }
 
@@ -71,11 +89,11 @@ public class Document {
 
   public String title() {
     List<DocumentEdited> titleEdits = documentEvents(DocumentEdited.class).
-        filter(documentEdited -> documentEdited.title.isPresent()).collect(Collectors.toList());
+        filter(documentEdited -> documentEdited.title != null).collect(Collectors.toList());
     if (titleEdits.size() == 0) {
       return "";
     }
-    return titleEdits.get(titleEdits.size() - 1).title.get();
+    return titleEdits.get(titleEdits.size() - 1).title;
   }
 
 
@@ -87,12 +105,12 @@ public class Document {
 
   public String content() {
     List<DocumentEdited> contentEdits = documentEvents(DocumentEdited.class).
-        filter(documentEdited -> documentEdited.content.isPresent()).
+        filter(documentEdited -> documentEdited.content != null).
         collect(Collectors.toList());
     if (contentEdits.size() == 0) {
       return "";
     }
-    return contentEdits.get(contentEdits.size() - 1).content.get();
+    return contentEdits.get(contentEdits.size() - 1).content;
   }
 
   public Long editorId() {

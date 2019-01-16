@@ -15,11 +15,12 @@ import pl.com.bottega.qma.core.CommandLogger;
 import pl.com.bottega.qma.core.SecurityManager;
 import pl.com.bottega.qma.core.TxManager;
 import pl.com.bottega.qma.core.events.DefaultEventEngine;
+import pl.com.bottega.qma.core.jpa.EntityManagerProvider;
 import pl.com.bottega.qma.core.validation.ValidationEngine;
 import pl.com.bottega.qma.docflow.DocumentFactory;
 import pl.com.bottega.qma.docflow.DocumentRepository;
 import pl.com.bottega.qma.docflow.DocumentResource;
-import pl.com.bottega.qma.docflow.InMemoryDocumentRepository;
+import pl.com.bottega.qma.docflow.JPADocumentRepository;
 import pl.com.bottega.qma.docflow.commands.ArchiveDocumentCommand;
 import pl.com.bottega.qma.docflow.commands.CreateDocumentCommand;
 import pl.com.bottega.qma.docflow.commands.EditDocumentCommand;
@@ -54,6 +55,7 @@ public class Qma extends Application<QmaConfiguration> {
     private ArchiveDocumentHandler archiveDocumentHandler;
     private CommandGateway commandGateway;
     private DocumentPublishedListener documentPublishedListener;
+    private EntityManagerProvider entityManagerProvider;
 
     public static void main(String[] args) throws Exception {
         new Qma().run(args);
@@ -69,7 +71,8 @@ public class Qma extends Application<QmaConfiguration> {
         securityManager = new SecurityManager();
         txManager = new TxManager();
         validationEngine = new ValidationEngine();
-        documentRepository = new InMemoryDocumentRepository();
+        entityManagerProvider = new EntityManagerProvider();
+        documentRepository = new JPADocumentRepository(entityManagerProvider);
         defaultEventEngine = new DefaultEventEngine();
         confirmationRepository = new InMemoryConfirmationRepository();
         hrFacade = new RemoteHrFacade();
