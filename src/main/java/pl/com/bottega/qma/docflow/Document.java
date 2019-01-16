@@ -51,7 +51,7 @@ public class Document {
 
   public void publish(PublishDocumentCommand publishDocumentCommand) {
     status().checkOperationPermited(DocumentPublished.class);
-    var event = new DocumentPublished(number(), publishDocumentCommand.publisherId, LocalDateTime.now(),
+    DocumentEvent event = new DocumentPublished(number(), publishDocumentCommand.publisherId, LocalDateTime.now(),
         publishDocumentCommand.departmentCodes);
     events.add(event);
     eventPublisher.publish(event);

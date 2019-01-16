@@ -1,6 +1,7 @@
 package pl.com.bottega.qma.docflow.handlers;
 
 import pl.com.bottega.qma.core.Handler;
+import pl.com.bottega.qma.docflow.Document;
 import pl.com.bottega.qma.docflow.DocumentRepository;
 import pl.com.bottega.qma.docflow.commands.PublishDocumentCommand;
 
@@ -14,7 +15,7 @@ public class PublishDocumentHandler implements Handler<PublishDocumentCommand, V
 
   @Override
   public Void handle(PublishDocumentCommand publishDocumentCommand) {
-    var doc = documentRepository.get(publishDocumentCommand.documentNumber);
+    Document doc = documentRepository.get(publishDocumentCommand.documentNumber);
     doc.publish(publishDocumentCommand);
     documentRepository.put(doc);
     return null;

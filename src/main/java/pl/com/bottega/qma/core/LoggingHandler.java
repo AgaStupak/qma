@@ -11,7 +11,7 @@ public class LoggingHandler<CommandT extends Command, ReturnT> extends HandlerDe
   @Override
   public ReturnT handle(CommandT command) {
     commandLogger.executionStarted(command);
-    var retVal = decoratedHandler.handle(command);
+    ReturnT retVal = decoratedHandler.handle(command);
     commandLogger.executionFinished(command);
     return retVal;
   }

@@ -8,7 +8,9 @@ import org.mockito.MockitoAnnotations;
 import pl.com.bottega.qma.core.events.EventPublisher;
 import pl.com.bottega.qma.docflow.commands.*;
 import pl.com.bottega.qma.docflow.events.DocumentPublished;
+import pl.com.bottega.qma.docflow.handlers.VerifyDocumentHandler;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -26,8 +28,8 @@ public class DocumentTest {
   private final String newTitle = "new title";
   private final String newContent = "new content";
   private final Long uberManagerId = 3L;
-  private Collection<String> departments = List.of("DEP1", "DEP2", "DEP3");
-  private Collection<String> otherDepartments  = List.of("DEP4", "DEP5");
+  private Collection<String> departments = Arrays.asList("DEP1", "DEP2", "DEP3");
+  private Collection<String> otherDepartments  = Arrays.asList("DEP4", "DEP5");
 
   @Mock
   private EventPublisher eventPublisher;
@@ -39,7 +41,7 @@ public class DocumentTest {
 
   @Test
   public void createsDocument() {
-    var document = draftDocument();
+    Document document = draftDocument();
 
     assertThat(document.number()).isEqualTo(number);
     assertThat(document.creatorId()).isEqualTo(employeeId);
@@ -50,7 +52,7 @@ public class DocumentTest {
 
   @Test
   public void updatesDocumentTitle() {
-    var document = draftDocument();
+    Document document = draftDocument();
 
     editDocument(document, Optional.of(newTitle), Optional.empty());
 
@@ -60,7 +62,7 @@ public class DocumentTest {
 
   @Test
   public void updatesDocumentTitleAndContent() {
-    var document = draftDocument();
+    Document document = draftDocument();
 
     editDocument(document, Optional.of(newTitle), Optional.of(newContent));
 
@@ -99,7 +101,7 @@ public class DocumentTest {
 
   @Test
   public void documentCreatorCantVerifyIt() {
-    var document = draftDocument();
+    Document document = draftDocument();
     editDocument(document, Optional.of(newTitle), Optional.of(newContent));
 
     assertThatThrownBy(() -> verifyDocument(document, employeeId)).
@@ -109,7 +111,7 @@ public class DocumentTest {
 
   @Test
   public void documentEditorCantVerifyIt() {
-    var document = draftDocument();
+    Document document = draftDocument();
     editDocument(document, Optional.of(newTitle), Optional.of(newContent), managerId);
 
     assertThatThrownBy(() -> verifyDocument(document)).
@@ -128,7 +130,7 @@ public class DocumentTest {
 
   @Test
   public void cantPublishDraftDocument() {
-    var document = draftDocument();
+    Document document = draftDocument();
 
     assertThatThrownBy(() -> publishDocument(document)).
         isInstanceOf(IllegalDocumentOperation.class).
@@ -155,7 +157,7 @@ public class DocumentTest {
 
   @Test
   public void archivesDocumentsInAnyState() {
-    var docs = List.of(draftDocument(), verifiedDocument(), publishedDocument());
+    List<Document> docs = Arrays.asList(draftDocument(), verifiedDocument(), publishedDocument());
 
     ArchiveDocumentCommand archiveDocumentCommand = new ArchiveDocumentCommand();
     archiveDocumentCommand.archiverId = uberManagerId;
@@ -169,13 +171,13 @@ public class DocumentTest {
 
   @Test
   public void notifiesAboutPublishedEvent() {
-    var doc = publishedDocument();
+    Document doc = publishedDocument();
     
     verify(eventPublisher).publish(any(DocumentPublished.class));
   }
 
   private Document draftDocument() {
-    var cmd = new CreateDocumentCommand();
+    CreateDocumentCommand cmd = new CreateDocumentCommand();
     cmd.creatorId = employeeId;
 
     return new Document(number, cmd, eventPublisher);
@@ -186,7 +188,7 @@ public class DocumentTest {
   }
 
   private void editDocument(Document document, Optional<String> newTitle, Optional<String> newContent, Long editorId) {
-    var editDocumentCommand = new EditDocumentCommand();
+    EditDocumentCommand editDocumentCommand = new EditDocumentCommand();
     editDocumentCommand.documentNumber = document.number();
     editDocumentCommand.editorId = editorId;
     editDocumentCommand.title = newTitle;
@@ -195,7 +197,7 @@ public class DocumentTest {
   }
 
   private void verifyDocument(Document document, Long verifierId) {
-    var verifyDocumentCommand = new VerifyDocumentCommand();
+    VerifyDocumentCommand verifyDocumentCommand = new VerifyDocumentCommand();
     verifyDocumentCommand.verifierId = verifierId;
     verifyDocumentCommand.documentNumber = document.number();
     document.verify(verifyDocumentCommand);
@@ -210,7 +212,7 @@ public class DocumentTest {
   }
 
   private void publishDocument(Document document, Collection<String> departments) {
-    var publishDocumentCommand = new PublishDocumentCommand();
+    PublishDocumentCommand publishDocumentCommand = new PublishDocumentCommand();
     publishDocumentCommand.publisherId = uberManagerId;
     publishDocumentCommand.documentNumber = document.number();
     publishDocumentCommand.departmentCodes.addAll(departments);
@@ -219,7 +221,7 @@ public class DocumentTest {
   }
 
   private Document verifiedDocument() {
-    var document = draftDocument();
+    Document document = draftDocument();
     editDocument(document, Optional.of(newTitle), Optional.of(newContent));
     verifyDocument(document);
     return document;
@@ -227,7 +229,7 @@ public class DocumentTest {
 
 
   private Document publishedDocument() {
-    var document = verifiedDocument();
+    Document document = verifiedDocument();
     publishDocument(document);
     return document;
   }

@@ -1,6 +1,7 @@
 package pl.com.bottega.qma.docflow.handlers;
 
 import pl.com.bottega.qma.core.Handler;
+import pl.com.bottega.qma.docflow.Document;
 import pl.com.bottega.qma.docflow.DocumentRepository;
 import pl.com.bottega.qma.docflow.commands.VerifyDocumentCommand;
 
@@ -14,7 +15,7 @@ public class VerifyDocumentHandler implements Handler<VerifyDocumentCommand, Voi
 
   @Override
   public Void handle(VerifyDocumentCommand verifyDocumentCommand) {
-    var doc = documentRepository.get(verifyDocumentCommand.documentNumber);
+    Document doc = documentRepository.get(verifyDocumentCommand.documentNumber);
     doc.verify(verifyDocumentCommand);
     documentRepository.put(doc);
     return null;

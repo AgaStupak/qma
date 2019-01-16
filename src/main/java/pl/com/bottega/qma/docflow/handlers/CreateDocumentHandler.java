@@ -1,6 +1,7 @@
 package pl.com.bottega.qma.docflow.handlers;
 
 import pl.com.bottega.qma.core.Handler;
+import pl.com.bottega.qma.docflow.Document;
 import pl.com.bottega.qma.docflow.DocumentFactory;
 import pl.com.bottega.qma.docflow.DocumentRepository;
 import pl.com.bottega.qma.docflow.commands.CreateDocumentCommand;
@@ -17,7 +18,7 @@ public class CreateDocumentHandler implements Handler<CreateDocumentCommand, Str
 
   @Override
   public String handle(CreateDocumentCommand createDocumentCommand) {
-    var doc = documentFactory.create(createDocumentCommand);
+    Document doc = documentFactory.create(createDocumentCommand);
     documentRepository.put(doc);
     return doc.number();
   }

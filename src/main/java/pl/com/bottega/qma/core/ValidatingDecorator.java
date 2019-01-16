@@ -1,6 +1,7 @@
 package pl.com.bottega.qma.core;
 
 import pl.com.bottega.qma.core.validation.ValidationEngine;
+import pl.com.bottega.qma.core.validation.ValidationErrors;
 
 public class ValidatingDecorator<CommandT extends Command, ReturnT> extends HandlerDecorator<CommandT, ReturnT> {
   private final ValidationEngine validationEngine;
@@ -12,7 +13,7 @@ public class ValidatingDecorator<CommandT extends Command, ReturnT> extends Hand
 
   @Override
   public ReturnT handle(CommandT command) {
-    var errors = validationEngine.validate(command);
+    ValidationErrors errors = validationEngine.validate(command);
     if(errors.isInvalid()) {
       throw new IllegalArgumentException();
     }

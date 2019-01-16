@@ -8,8 +8,8 @@ class ProfilingHandler<CommandT extends Command, ReturnT> extends HandlerDecorat
 
   @Override
   public ReturnT handle(CommandT command) {
-    var profiler = new Profiler(command, this);
-    var retVal = decoratedHandler.handle(command);
+    Profiler profiler = new Profiler(command, this);
+    ReturnT retVal = decoratedHandler.handle(command);
     profiler.finished();
     return retVal;
   }

@@ -11,7 +11,7 @@ public class DefaultEventEngineTest {
 
   @Test
   public void notifiesListener() {
-    var listener = mock(EventListener.class);
+    EventListener listener = mock(EventListener.class);
     defaultEventEngine.subscribe(Long.class, listener);
 
     defaultEventEngine.publish(1L);
@@ -21,8 +21,8 @@ public class DefaultEventEngineTest {
 
   @Test
   public void notifiesManyListeners() {
-    var longListener = mock(EventListener.class);
-    var otherLongListener = mock(EventListener.class);
+    EventListener longListener = mock(EventListener.class);
+    EventListener otherLongListener = mock(EventListener.class);
     defaultEventEngine.subscribe(Long.class, longListener);
     defaultEventEngine.subscribe(Long.class, otherLongListener);
 
@@ -34,8 +34,8 @@ public class DefaultEventEngineTest {
 
   @Test
   public void notifiesListenersBasedOnEventType() {
-    var longListener = mock(EventListener.class);
-    var stringListener = mock(EventListener.class);
+    EventListener longListener = mock(EventListener.class);
+    EventListener stringListener = mock(EventListener.class);
     defaultEventEngine.subscribe(Long.class, longListener);
     defaultEventEngine.subscribe(String.class, stringListener);
 

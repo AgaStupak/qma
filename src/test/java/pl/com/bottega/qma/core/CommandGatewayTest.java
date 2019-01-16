@@ -104,7 +104,7 @@ public class CommandGatewayTest {
 
   @Test
   public void stopsExecutionWhenCommandIsInvalid() {
-    var errors = mock(ValidationErrors.class);
+    ValidationErrors errors = mock(ValidationErrors.class);
     when(errors.isInvalid()).thenReturn(true);
     when(validationEngine.validate(command)).thenReturn(errors);
 

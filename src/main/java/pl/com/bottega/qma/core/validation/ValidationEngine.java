@@ -13,7 +13,7 @@ public class ValidationEngine {
   private final Map<Class, List<Validator>> validatorsCache = new HashMap<>();
 
   public ValidationErrors validate(Object object) {
-    var chain = validatorsChain(object.getClass());
+    List<Validator> chain = validatorsChain(object.getClass());
     ValidationErrors errors = new ValidationErrors();
     chain.forEach(validator -> validator.validate(object, errors));
     return errors;
@@ -23,13 +23,13 @@ public class ValidationEngine {
     if(validatorsCache.containsKey(clazz)) {
       return validatorsCache.get(clazz);
     }
-    var chain = createChain(clazz);
+    List<Validator> chain = createChain(clazz);
     validatorsCache.put(clazz, chain);
     return chain;
   }
 
   private List<Validator> createChain(Class clazz) {
-    var chain = new LinkedList<Validator>();
+    List<Validator> chain = new LinkedList<Validator>();
     for(Field field : clazz.getDeclaredFields()) {
       for (Annotation annotation : field.getDeclaredAnnotations()) {
         validatorFactory.createValidator(field, annotation).ifPresent(validator -> chain.add(validator));
