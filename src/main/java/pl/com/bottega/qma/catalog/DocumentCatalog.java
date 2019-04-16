@@ -2,7 +2,7 @@ package pl.com.bottega.qma.catalog;
 
 class DocumentCatalog {
 
-  DocumentDto find(String nr) {
+  DocumentDetails find(String nr) {
     return null;
   }
 

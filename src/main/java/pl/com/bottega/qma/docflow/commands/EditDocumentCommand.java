@@ -8,6 +8,6 @@ public class EditDocumentCommand implements Command {
 
   public String documentNumber;
   public Long editorId;
-  public Optional<String> title, content;
+  public String title, content;
 
 }

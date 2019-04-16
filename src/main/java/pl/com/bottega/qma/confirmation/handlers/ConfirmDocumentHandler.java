@@ -2,15 +2,11 @@ package pl.com.bottega.qma.confirmation.handlers;
 
 import pl.com.bottega.qma.confirmation.commands.ConfirmDocumentCommand;
 import pl.com.bottega.qma.confirmation.commands.ConfirmDocumentOnBehalfCommand;
+import pl.com.bottega.qma.core.Handler;
 
-public class ConfirmDocumentHandler {
+public class ConfirmDocumentHandler implements Handler<ConfirmDocumentCommand> {
+  @Override
+  public void handle(ConfirmDocumentCommand command) {
 
-  public Void confirm(ConfirmDocumentCommand confirmDocumentCommand) {
-    return null;
   }
-
-  public Void confirmOnBehalf(ConfirmDocumentOnBehalfCommand confirmDocumentOnBehalfCommand) {
-    return null;
-  }
-
 }

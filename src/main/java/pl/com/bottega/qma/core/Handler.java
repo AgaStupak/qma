@@ -1,7 +1,7 @@
 package pl.com.bottega.qma.core;
 
-public interface Handler<CommandT extends Command, ReturnT> {
+public interface Handler<CommandT extends Command> {
 
-  ReturnT handle(CommandT command);
+  void handle(CommandT command);
 
 }

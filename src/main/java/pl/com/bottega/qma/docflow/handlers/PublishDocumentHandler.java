@@ -3,9 +3,9 @@ package pl.com.bottega.qma.docflow.handlers;
 import pl.com.bottega.qma.core.Handler;
 import pl.com.bottega.qma.docflow.commands.PublishDocumentCommand;
 
-public class PublishDocumentHandler implements Handler<PublishDocumentCommand, Void> {
+public class PublishDocumentHandler implements Handler<PublishDocumentCommand> {
   @Override
-  public Void handle(PublishDocumentCommand publishDocumentCommand) {
-    return null;
+  public void handle(PublishDocumentCommand publishDocumentCommand) {
+
   }
 }
