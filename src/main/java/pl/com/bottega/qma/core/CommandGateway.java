@@ -1,7 +1,9 @@
 package pl.com.bottega.qma.core;
 
+import reactor.core.publisher.Mono;
+
 public interface CommandGateway {
 
-    void execute(Command command);
+  Mono<Void> execute(Command command);
 
 }

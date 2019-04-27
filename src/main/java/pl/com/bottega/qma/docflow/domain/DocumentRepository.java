@@ -1,7 +1,9 @@
 package pl.com.bottega.qma.docflow.domain;
 
-public interface DocumentRepository {
-    void save(Document document);
+import reactor.core.publisher.Mono;
 
-    Document get(String documentNumber);
+public interface DocumentRepository {
+    Mono<Void> save(Document document);
+
+    Mono<Document> get(String documentNumber);
 }

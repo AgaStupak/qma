@@ -5,6 +5,7 @@ import pl.com.bottega.qma.docflow.commands.CreateDocumentCommand;
 import pl.com.bottega.qma.docflow.domain.Document;
 import pl.com.bottega.qma.docflow.domain.DocumentFactory;
 import pl.com.bottega.qma.docflow.domain.DocumentRepository;
+import reactor.core.publisher.Mono;
 
 public class CreateDocumentHandler implements Handler<CreateDocumentCommand> {
 
@@ -17,9 +18,9 @@ public class CreateDocumentHandler implements Handler<CreateDocumentCommand> {
   }
 
   @Override
-  public void handle(CreateDocumentCommand createDocumentCommand) {
+  public Mono<Void> handle(CreateDocumentCommand createDocumentCommand) {
     Document document = factory.create(createDocumentCommand);
-    repository.save(document);
+    return repository.save(document);
   }
 }
 

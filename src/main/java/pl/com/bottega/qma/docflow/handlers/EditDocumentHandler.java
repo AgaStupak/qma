@@ -2,8 +2,8 @@ package pl.com.bottega.qma.docflow.handlers;
 
 import pl.com.bottega.qma.core.Handler;
 import pl.com.bottega.qma.docflow.commands.EditDocumentCommand;
-import pl.com.bottega.qma.docflow.domain.Document;
 import pl.com.bottega.qma.docflow.domain.DocumentRepository;
+import reactor.core.publisher.Mono;
 
 public class EditDocumentHandler implements Handler<EditDocumentCommand> {
 
@@ -14,9 +14,11 @@ public class EditDocumentHandler implements Handler<EditDocumentCommand> {
   }
 
   @Override
-  public void handle(EditDocumentCommand editDocumentCommand) {
-    Document document = repository.get(editDocumentCommand.documentNumber);
-    document.edit(editDocumentCommand);
-    repository.save(document);
+  public Mono<Void> handle(EditDocumentCommand editDocumentCommand) {
+    return repository.get(editDocumentCommand.documentNumber)
+        .flatMap(document -> {
+          document.edit(editDocumentCommand);
+          return repository.save(document);
+        });
   }
 }

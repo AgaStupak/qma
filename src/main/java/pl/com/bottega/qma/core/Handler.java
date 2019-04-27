@@ -1,7 +1,9 @@
 package pl.com.bottega.qma.core;
 
+import reactor.core.publisher.Mono;
+
 public interface Handler<CommandT extends Command> {
 
-  void handle(CommandT command);
+  Mono<Void> handle(CommandT command);
 
 }
