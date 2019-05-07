@@ -1,4 +1,7 @@
-package pl.com.bottega.qma.docflow;
+package pl.com.bottega.qma.docflow.adapters.db;
+
+import pl.com.bottega.qma.docflow.Document;
+import pl.com.bottega.qma.docflow.DocumentRepository;
 
 import java.util.HashMap;
 import java.util.Map;

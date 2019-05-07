@@ -1,4 +1,4 @@
-package pl.com.bottega.qma.docflow;
+package pl.com.bottega.qma.docflow.adapters.rest;
 
 import org.springframework.web.bind.annotation.*;
 import pl.com.bottega.qma.core.CommandGateway;

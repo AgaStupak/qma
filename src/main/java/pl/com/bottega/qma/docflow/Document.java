@@ -18,6 +18,11 @@ public class Document {
   private final List<DocumentEvent> events = new ArrayList<>();
   private final EventPublisher eventPublisher;
 
+  public Document(List<DocumentEvent> events, EventPublisher eventPublisher) {
+    this.events.addAll(events);
+    this.eventPublisher = eventPublisher;
+  }
+
   public Document(String number, CreateDocumentCommand createDocumentCommand, EventPublisher eventPublisher) {
     this.eventPublisher = eventPublisher;
     events.add(new DocumentCreated(number, createDocumentCommand.creatorId, LocalDateTime.now()));

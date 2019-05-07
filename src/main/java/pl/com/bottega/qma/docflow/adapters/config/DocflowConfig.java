@@ -1,8 +1,14 @@
-package pl.com.bottega.qma.docflow;
+package pl.com.bottega.qma.docflow.adapters.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pl.com.bottega.qma.core.events.EventPublisher;
+import pl.com.bottega.qma.docflow.DocumentFactory;
+import pl.com.bottega.qma.docflow.DocumentNumberGenerator;
+import pl.com.bottega.qma.docflow.DocumentRepository;
+import pl.com.bottega.qma.docflow.adapters.db.InMemoryDocumentRepository;
+import pl.com.bottega.qma.docflow.adapters.db.MongoDocumentRepository;
+import pl.com.bottega.qma.docflow.adapters.db.SpringDataMongoDocumentRepository;
 import pl.com.bottega.qma.docflow.handlers.*;
 import pl.com.bottega.qma.docflow.numbergenerators.ISONumberGenerator;
 
@@ -40,8 +46,8 @@ public class DocflowConfig {
   }
 
   @Bean
-  public DocumentRepository documentRepository() {
-    return new InMemoryDocumentRepository();
+  public DocumentRepository documentRepository(SpringDataMongoDocumentRepository springDataMongoDocumentRepository, EventPublisher eventPublisher) {
+    return new MongoDocumentRepository(springDataMongoDocumentRepository, eventPublisher);
   }
 
   @Bean
